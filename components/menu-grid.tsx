@@ -60,7 +60,7 @@ const defaultProducts = [
     id: "d7",
     name: "Brownies",
     description: "",
-    price: 500,
+    price: 600,
     category: "desserts",
   },
   {
