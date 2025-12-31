@@ -60,7 +60,7 @@ const defaultProducts = [
     id: "d7",
     name: "Brownies",
     description: "",
-    price: 400,
+    price: 500,
     category: "desserts",
   },
   {
@@ -85,6 +85,13 @@ const defaultProducts = [
     category: "desserts",
   },
   // BREAKFAST
+  {
+    id:"b8",
+    name: "Water",
+    description: "",
+    category: "breakfast",
+    price: 50
+  },
   {
     id: "b1",
     name: "Kahawa",
