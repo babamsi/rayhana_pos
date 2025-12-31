@@ -146,7 +146,7 @@ export function ReceiptManagementSheet({ open, onOpenChange }: ReceiptManagement
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[90dvh] max-h-[90dvh] rounded-t-3xl p-0 flex flex-col overflow-hidden">
+      {/* <SheetContent side="bottom" className="h-[90dvh] max-h-[90dvh] rounded-t-3xl p-0 flex flex-col overflow-hidden">
         <div className="flex items-center justify-between px-6 py-5 border-b border-border bg-gradient-to-br from-card to-card/50 flex-shrink-0">
           <div>
             <h2 className="font-bold text-xl tracking-tight">Menu Management</h2>
@@ -449,7 +449,7 @@ export function ReceiptManagementSheet({ open, onOpenChange }: ReceiptManagement
             </Button>
           </div>
         )}
-      </SheetContent>
+      </SheetContent> */}
     </Sheet>
   )
 }

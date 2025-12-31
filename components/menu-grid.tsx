@@ -89,7 +89,7 @@ const defaultProducts = [
     id: "b1",
     name: "Kahawa",
     description: "Per cup",
-    price: 1,
+    price: 50,
     category: "breakfast",
   },
   // LUNCH
