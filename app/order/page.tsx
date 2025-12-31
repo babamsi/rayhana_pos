@@ -30,13 +30,13 @@ function OrderHeader({
         </Link>
 
         <div className="flex items-center gap-2">
-          <button
+          {/* <button
             onClick={onReceiptClick}
             className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-muted transition-colors"
             title="Menu Items"
           >
             <FileText className="w-4 h-4" />
-          </button>
+          </button> */}
 
           <button
             onClick={onHistoryClick}
