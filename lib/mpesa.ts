@@ -50,8 +50,7 @@ export async function initiateMpesaPayment(
     const response = await fetch(`${supabaseUrl}`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         amount: amount.toString(),
@@ -103,16 +102,22 @@ export async function savePendingOrder(
 
 /**
  * Delete pending order after payment completion
+ * This is a non-critical operation - failures are logged but not thrown
  */
 export async function deletePendingOrder(checkoutRequestId: string): Promise<void> {
-  const { error } = await supabase
-    .from("pending_orders")
-    .delete()
-    .eq("mpesa_checkout_request_id", checkoutRequestId)
+  try {
+    const { error } = await supabase
+      .from("pending_orders")
+      .delete()
+      .eq("mpesa_checkout_request_id", checkoutRequestId)
 
-  if (error) {
-    console.error("Error deleting pending order:", error)
-    // Don't throw error, just log it
+    if (error) {
+      console.warn("Error deleting pending order (non-critical):", error)
+      // Don't throw - this is cleanup, order is already saved
+    }
+  } catch (error) {
+    console.warn("Exception deleting pending order (non-critical):", error)
+    // Don't throw - this is cleanup, order is already saved
   }
 }
 
@@ -120,18 +125,33 @@ export async function deletePendingOrder(checkoutRequestId: string): Promise<voi
  * Get pending order by checkout request ID
  */
 export async function getPendingOrder(checkoutRequestId: string): Promise<Order | null> {
-  const { data, error } = await supabase
-    .from("pending_orders")
-    .select("*")
-    .eq("mpesa_checkout_request_id", checkoutRequestId)
-    .single()
+  try {
+    const { data, error } = await supabase
+      .from("pending_orders")
+      .select("order_data")
+      .eq("mpesa_checkout_request_id", checkoutRequestId)
+      .maybeSingle()
 
-  if (error) {
-    console.error("Error fetching pending order:", error)
+    if (error) {
+      console.error("Error fetching pending order:", error)
+      return null
+    }
+
+    if (!data) {
+      console.error("No pending order found for checkout request ID:", checkoutRequestId)
+      return null
+    }
+
+    // Handle both JSONB and direct object formats
+    const orderData = typeof data.order_data === 'string' 
+      ? JSON.parse(data.order_data) 
+      : data.order_data
+
+    return orderData as Order
+  } catch (error: any) {
+    console.error("Error parsing pending order:", error)
     return null
   }
-
-  return data?.order_data || null
 }
 
 

@@ -235,26 +235,54 @@ export function CartDrawer({ open, onOpenChange }: { open: boolean; onOpenChange
       const transactionDateTime = callbackMetadata.Item.find((item: any) => item.Name === "TransactionDate")?.Value
       const transactionDate = transactionDateTime?.toString() || ""
 
-      // Retrieve the pending order
-      const pendingOrder = await getPendingOrder(checkoutRequestID)
-
-      if (!pendingOrder) {
-        throw new Error("Pending order not found")
+      // Try to retrieve the pending order, but don't fail if it doesn't exist
+      let pendingOrder: Order | null = null
+      try {
+        pendingOrder = await getPendingOrder(checkoutRequestID)
+      } catch (error) {
+        console.warn("Could not retrieve pending order, will reconstruct from current state:", error)
       }
 
-      // Create the final order with payment details
-      const finalOrder: Order = {
-        ...pendingOrder,
-        paymentMethod: "mpesa",
-        mpesaNumber: pendingOrder.mpesaNumber,
-        timestamp: new Date().toISOString(),
+      // Create the final order - use pending order if available, otherwise reconstruct from current state
+      let finalOrder: Order
+      
+      if (pendingOrder) {
+        // Use data from pending order
+        finalOrder = {
+          ...pendingOrder,
+          paymentMethod: "mpesa",
+          mpesaNumber: pendingOrder.mpesaNumber,
+          timestamp: new Date().toISOString(),
+        }
+      } else {
+        // Reconstruct order from current cart state (fallback)
+        console.warn("Reconstructing order from current cart state")
+        const orderId = generateOrderId()
+        finalOrder = {
+          id: orderId,
+          items: items.map((item) => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+          })),
+          total,
+          paymentMethod: "mpesa",
+          mpesaNumber: mpesaNumber || "Unknown",
+          timestamp: new Date().toISOString(),
+        }
       }
 
-      // Save the order
+      // Save the order - this is the critical operation
       await saveOrder(finalOrder)
 
-      // Delete pending order
-      await deletePendingOrder(checkoutRequestID)
+      // Try to delete pending order, but don't fail if it doesn't work
+      try {
+        await deletePendingOrder(checkoutRequestID)
+      } catch (error) {
+        console.warn("Could not delete pending order, but order was saved successfully:", error)
+        // Order is already saved, so we continue
+      }
 
       if (navigator.vibrate) navigator.vibrate([50, 100, 50])
 
