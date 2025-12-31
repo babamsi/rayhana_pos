@@ -138,7 +138,7 @@ const defaultProducts = [
   {
     id: "l1",
     name: "Shawarma",
-    description: "Small size",
+    description: "Medium size",
     price: 400,
     category: "lunch",
   },
