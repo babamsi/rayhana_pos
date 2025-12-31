@@ -193,8 +193,7 @@ export function CartDrawer({ open, onOpenChange }: { open: boolean; onOpenChange
         })),
         total,
         paymentMethod: "mpesa",
-        mpesaNumber: formattedPhone,
-        timestamp: new Date().toISOString(),
+        mpesaNumber: formattedPhone
       }
 
       // Initiate M-Pesa payment
@@ -251,8 +250,7 @@ export function CartDrawer({ open, onOpenChange }: { open: boolean; onOpenChange
         finalOrder = {
           ...pendingOrder,
           paymentMethod: "mpesa",
-          mpesaNumber: pendingOrder.mpesaNumber,
-          timestamp: new Date().toISOString(),
+          mpesaNumber: pendingOrder.mpesaNumber
         }
       } else {
         // Reconstruct order from current cart state (fallback)
@@ -268,8 +266,7 @@ export function CartDrawer({ open, onOpenChange }: { open: boolean; onOpenChange
           })),
           total,
           paymentMethod: "mpesa",
-          mpesaNumber: mpesaNumber || "Unknown",
-          timestamp: new Date().toISOString(),
+          mpesaNumber: mpesaNumber || "Unknown"
         }
       }
 
@@ -345,8 +342,7 @@ export function CartDrawer({ open, onOpenChange }: { open: boolean; onOpenChange
       total,
       paymentMethod: "cash",
       cashReceived: Number.parseFloat(cashReceived || "0"),
-      change: cashChange,
-      timestamp: new Date().toISOString(),
+      change: cashChange
     }
 
     try {
@@ -405,8 +401,7 @@ export function CartDrawer({ open, onOpenChange }: { open: boolean; onOpenChange
       total,
       paymentMethod: "cash" as PaymentMethod,
       cashReceived: total,
-      change: 0,
-      timestamp: new Date().toISOString(),
+      change: 0
     }
 
     try {
